@@ -1,14 +1,19 @@
 package StepDefinations;
 import java.util.List;
+import org.apache.log4j.Logger;
+
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
 import org.testng.Assert;
 
 import reusablecomponents.ReadPropertyFile;
 import uistore.SearchPageDetails;
 import uistore.SigninPageDetails;
+import utilities.TakeScreenShot;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -17,17 +22,19 @@ import io.cucumber.junit.Cucumber;
 
 @RunWith(Cucumber.class)
 public class StepDefination extends ReadPropertyFile {
-
+	public static Logger log=Logger.getLogger(ReadPropertyFile.class.getName());
 	@Given("^Initialize browser with chrome$")
 	public void initialize_browser_with_chrome() throws Throwable {
 
 		driver = DriverInitialisation();
+		log.info("Browser is successufully invoked");
 
 	}
 
 	@And("^Navigate to \"([^\"]*)\" site$")
 	public void navigate_to_something_site(String strArg1) throws Throwable {
 		driver.get(strArg1);
+		log.info("Navigated successfully");
 
 	}
 
@@ -38,6 +45,7 @@ public class StepDefination extends ReadPropertyFile {
 		s.getEmail().sendKeys(email);
 		s.getPassword().sendKeys(password);
 		s.getSigninButton().click();
+		log.info("Submitted successfully");
 
 	}
 
@@ -52,6 +60,7 @@ public class StepDefination extends ReadPropertyFile {
 
 		SearchPageDetails s = new SearchPageDetails(driver);
 		s.getSearch().sendKeys(strArg1);
+		log.info("Searched successfully");
 		
 	}
 
@@ -101,6 +110,7 @@ public class StepDefination extends ReadPropertyFile {
 	public void check_numberof_links_in_the_page() throws Throwable {
 		List<WebElement> links = driver.findElements(By.tagName("a"));
 		System.out.println("The number of links is " + links.size());
+		log.info("number of links displayed successfully");
 
 	}
 
@@ -149,6 +159,7 @@ public class StepDefination extends ReadPropertyFile {
 	public void check_the_cod_availability() throws Throwable {
 
 		System.out.println(driver.findElement(By.xpath("//*[@id=\"PostalCodeCheckerAvailability\"]")).getText());
+		log.info("COD Availability checked successfully");
 		
 	}
 	 @And("^click on Rakhi$")
@@ -185,10 +196,48 @@ public class StepDefination extends ReadPropertyFile {
 	    @And("^Close the driver$")
 		public void close_the_driver() throws Throwable {
 	    	
+	    	System.setProperty("webdriver.chrome.driver", "//chrome path in system//");
+		    ChromeOptions options  = new ChromeOptions();
+		    options.setExperimentalOption("excludeSwitches", "disable-popup-blocking");
+		    
+	    	TakeScreenShot r = new TakeScreenShot();
+			
+			try {
+				r.getScreenshot("screenshots");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			log.info("Screen Shot Captured");
 			driver.close();
 
 		}
+	    
+	    @Then("^Click on Rock on Stand$")
+	    public void click_on_rock_on_stand() throws Throwable {
+	       driver.findElement(By.xpath("//*[@id=\"CollectionSection-1597674868179\"]/div[2]/div/div/div[1]/div/a/div[2]/div[1]")).click();
+	    }
 
+	    @Then("^Click on Click here$")
+	    public void click_on_click_here() throws Throwable {
+	       driver.findElement(By.xpath("//*[@id=\"myownreturntext\"]/a")).click();
+	    }
+	    
+	    @Then("^choose ShopbyCategory and click Travel Acccessories$")
+	    public void choose_shopbycategory_and_click_travel_acccessories() throws Throwable {
+	        Actions mouse=new Actions(driver);
+	        mouse.moveToElement(driver.findElement(By.xpath("//*[@id='myheader']/div[1]/div/div/ul/li[9]/a"))).perform();
+	        Thread.sleep(1000);
+	        driver.findElement(By.xpath("//*[@id='myheader']/div[1]/div/div/ul/li[9]/ul/li[13]/a")).click();
+	        
+	        
+	    }
+	    @And("^select key chain and add to cart$")
+	    public void select_key_chain_and_add_to_cart() throws Throwable {
+	    	driver.findElement(By.xpath("//*[@id=\"CollectionAjaxContent\"]/div[1]/div[20]/div/a/div[2]/div[1]")).click();
+	    	driver.findElement(By.xpath("//*[@id=\"AddToCartForm-4764077457496\"]/div[4]/div/span[1]")).click();
+	    	driver.findElement(By.xpath("//*[@id=\"AddToCartForm-4764077457496\"]/button")).click();
 
+	    }
 	   
 }
